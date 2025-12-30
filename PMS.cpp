@@ -1,0 +1,271 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 50
+#define LOGMAX 200
+
+// Preloaded medicine data (50 items)
+int ids[MAX] = {
+ 1,2,3,4,5,6,7,8,9,10,
+ 11,12,13,14,15,16,17,18,19,20,
+ 21,22,23,24,25,26,27,28,29,30,
+ 31,32,33,34,35,36,37,38,39,40,
+ 41,42,43,44,45,46,47,48,49,50
+};
+char names[MAX][20] = {
+ "Panadol","PanadolExtra","PanadolExtend","Ascard","Nuberol",
+ "Flagyl","Augmentin","Amoxil","Cetrizine","Lorin",
+ "Disprin","Brufen","Calpol","Acefyl","Ventolin",
+ "Gaviscon","OsnateD","Redoxon","Myteka","Skinoren",
+ "Conaz","Atem","ORS","Gravinate","Ponstan",
+ "Septran","Azomax","Clopidogrel","Lipitor","Glucophage",
+ "Insulin","Humulin","Neurobion","Evion","FolicAcid",
+ "IronSyrup","Multivitamin","Caltrate","Centrum","Becosules",
+ "Dexa","Hydralin","XyloSpray","Otrivin","Betnesol",
+ "Prednisolone","Ciprofloxacin","Levofloxacin","Zantac","Omeprazole"
+};
+char types[MAX][20] = {
+ "Tablet","Tablet","Tablet","Tablet","Tablet",
+ "Tablet","Tablet","Capsule","Tablet","Tablet",
+ "Tablet","Tablet","Syrup","Syrup","Inhaler",
+ "Syrup","Tablet","Tablet","Tablet","Cream",
+ "Lotion","Ampoule","Sachet","Tablet","Tablet",
+ "Tablet","Tablet","Tablet","Tablet","Tablet",
+ "Injection","Injection","Tablet","Capsule","Tablet",
+ "Syrup","Syrup","Tablet","Tablet","Capsule",
+ "Injection","Syrup","Spray","Spray","Tablet",
+ "Tablet","Tablet","Tablet","Tablet","Capsule"
+};
+float prices[MAX] = {
+ 36,60,73,32,65,
+ 48,420,250,80,95,
+ 40,120,200,199,550,
+ 250,120,850,278,755,
+ 348,154,25,70,150,
+ 95,350,450,1200,250,
+ 600,650,180,350,150,
+ 220,300,950,1200,400,
+ 120,180,250,280,90,
+ 150,300,450,200,350
+};
+int quantities[MAX] = {
+ 50,40,30,20,25,
+ 60,35,15,10,45,
+ 50,40,30,20,25,
+ 60,35,15,10,45,
+ 50,40,30,20,25,
+ 60,35,15,10,45,
+ 50,40,30,20,25,
+ 60,35,15,10,45,
+ 50,40,30,20,25
+};
+int count = 50;
+
+// Logs
+char stockLog[LOGMAX][100];
+int logCount = 0;
+
+char customerLog[LOGMAX][100];
+int custCount = 0;
+
+
+
+
+void addStockLog(const char *msg) {
+    if(logCount<LOGMAX) 
+	{
+        strcpy(stockLog[logCount], msg);
+        logCount++;
+    }
+}
+// Function declarations
+void welcome();
+void adminLogin();
+void customerMenu();
+void listMedicines();
+void expiryAlert();
+void profitLoss();
+void stockHistory();
+void customerData();
+void customerOrder();
+void addStockLog(const char *msg);
+void addCustomerLog(const char *msg);
+
+int main() {
+    welcome();
+    int choice;
+    printf("Login as: 1) Admin  2) Customer : ");
+    scanf("%d",&choice);
+
+    if(choice==1) adminLogin();
+    else if(choice==2) customerMenu();
+    else printf("Invalid choice!\n");
+
+    return 0;
+}
+
+void welcome() {
+    printf("=====================================\n");
+    printf("      Welcome to Our Pharmacy\n");
+    printf("=====================================\n");
+}
+
+void adminLogin() {
+    char password[20];
+    char correctPassword[20] = "admin123";
+
+    printf("Enter your password for security: ");
+    scanf("%s", password);
+
+    if(strcmp(password, correctPassword) == 0) {
+        printf("\nAccess Granted! Welcome Admin.\n");
+    int ch;
+    do {
+        printf("\n--- Admin Menu ---\n");
+        printf("1. View Medicines\n");
+        printf("2. Expiry Alert\n");
+        printf("3. Profit/Loss (demo)\n");
+        printf("4. Stock History\n");
+        printf("5. Customer Data\n");
+        printf("0. Logout\n");
+        printf("Enter choice: ");
+        scanf("%d",&ch);
+
+        switch(ch) {
+            case 1: listMedicines(); break;
+            case 2: expiryAlert(); break;
+            case 3: profitLoss(); break;
+            case 4: stockHistory(); break;
+            case 5: customerData(); break;
+            case 0: printf("Logging out...\n"); break;
+            default: printf("Invalid!\n");
+        }
+    } while(ch!=0);
+}
+    else {
+        printf("\nAccess Denied! Wrong Password.\n");
+    }
+}
+void customerMenu() {
+    printf("\n--- Customer Menu ---\n");
+    printf("Here are our available medicines:\n");
+    listMedicines();
+    customerOrder();
+}
+
+void listMedicines() {
+    printf("\nID  Name              Price \n");
+    printf("------------------------------------------\n");
+    for(int i=0;i<count;i++) {
+        printf("%-3d %-15s %-7.2f\n",
+               ids[i], names[i], prices[i]);
+    }
+}
+
+void expiryAlert() {
+    printf("Expiry Alert: ORS sachet expiring soon!\n");
+    printf("Expiry Alert: Nuberol tablet expiring soon!\n");
+    printf("Expiry Alert: Hydralin syrup expiring soon!\n");
+}
+
+void profitLoss() {
+    float total=0;
+    for(int i=0;i<count;i++) total += prices[i]*quantities[i];
+    printf("Total stock value: %.2f PKR\n", total);
+}
+
+void stockHistory() {
+    printf("\n--- Stock History ---\n");
+    if(logCount==0) printf("No history yet.\n");
+    else for(int i=0;i<logCount;i++) printf("%d) %s\n", i+1, stockLog[i]);
+}
+
+void customerData() {
+    printf("\n--- Customer Data ---\n");
+    if(custCount==0) printf("No customer orders yet.\n");
+    else for(int i=0;i<custCount;i++) printf("%d) %s\n", i+1, customerLog[i]);
+}
+
+void customerOrder() {
+    int orderIds[10], orderQty[10], orderCount=0;
+    char payOpt[20];
+    float total=0;
+
+    printf("\nHow many medicines you want? ");
+    scanf("%d",&orderCount);
+
+    for(int i=0;i<orderCount;i++) {
+        printf("Enter Medicine ID: ");
+        scanf("%d",&orderIds[i]);
+        printf("Enter Quantity: ");
+        scanf("%d",&orderQty[i]);
+    }
+
+    printf("\n--- Bill ---\n");
+    for(int i=0;i<orderCount;i++) {
+        int id = orderIds[i];
+        for(int j=0;j<count;j++) {
+            if(ids[j]==id) {
+                float lineTotal = prices[j]*orderQty[i];
+                total += lineTotal;
+                quantities[j] -= orderQty[i];
+                printf("%s x %d = %.2f\n", names[j], orderQty[i], lineTotal);
+
+                char msg1[100];
+                sprintf(msg1,"Stock reduced: %s x %d", names[j], orderQty[i]);
+                addStockLog(msg1);
+
+                char msg2[100];
+                sprintf(msg2,"Customer bought %s x %d", names[j], orderQty[i]);
+                addCustomerLog(msg2);
+            }
+        }
+    }
+
+    if(orderCount>5) {
+    printf("20%% discount applied!\n");
+    total = total * 0.7;
+    printf("Final Total after discount = %.2f PKR\n", total);
+} 
+else {
+    printf("No discount applied.\n");
+    printf("Final Total = %.2f PKR\n", total);
+}
+
+
+    char email[50];
+     printf("\nPlease enter your Email ID to receive the bill: ");
+    scanf("%s", email);
+
+    printf("Total Bill = %.2f PKR\n", total);
+
+    printf("Payment Option:Online payment only\n");
+    printf("Please scan the QR code that sent to your email.\n\n");
+    
+    int choice;
+    printf("Are you done sccaning?\n");
+    printf("Please attached the screenshot of the payment with the email\n");
+    printf("1. OK\n");
+    printf("2. Not Done\n");
+    printf("Enter choice (1 or 2): ");
+    scanf("%d", &choice);
+
+    if(choice == 1) {
+        printf("\nThank you! the payment has been received successfully.\n");
+    } else if(choice == 2) {
+        printf("\nPayment are not received. Please try again.\n");
+    } else {
+        printf("\nInvalid choice.\n");
+    }
+    printf("\nThank you for your order!");
+}
+void addCustomerLog(const char *msg) {
+    if(custCount<LOGMAX) {
+        strcpy(customerLog[custCount], msg);
+        custCount++;
+    }
+}
+
+
+
+
